@@ -31,16 +31,15 @@ if (mongoUrl == null) {
 } else {
   //Bluemix cloud foundry - Compose service connection
   //var mongooseUrl = 'mongodb://' + mongoService.credentials.user + ':' + mongoService.credentials.password + '@' + mongoService.credentials.uri + ':' + mongoService.credentials.port + '/project';
+  var mongooseUrl = mongoService.credentials.url;
   mongoose.Promise = global.Promise;
-  console.log("MONGO URL IS "+mongoUrl);
-  var options = {
-	      mongos: {
-	          ssl: true,
-	          sslValidate: true
-	      }
-	  }
-  mongoose.connect(mongoUrl, options);  
-  console.log("MONGOOSE IS CONNECTED!!!!");
+  mongoose.connect(mongooseUrl, function (err, res) {
+	        if (err) {
+	          console.log ('ERROR connecting to: ' + mongooseUrl + '. ' + err);
+	        } else {
+	          console.log ('Succeeded connected ' );
+	        }
+	      });
 }
 
 //JSON body parsing
