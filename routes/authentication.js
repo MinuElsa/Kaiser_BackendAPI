@@ -6,11 +6,13 @@ var user = require('../models/user.js');
 
 var async = require("async");
 var mw = require('../middleware/index.js');
+var validateLDAP = require("./frameHttpForMicroSvc.js");
 var request = require('request');
 
 module.exports = function(app) {
 	app.post('/authenticate', function (req, res, next) {
 		console.log("Authenticate.."+req.body.name);
+		console.log("req.get('host') is "+req.get('host'));
 	
 		//Going to call authenticate LDAP method.If the method is success(valid user), token is generated for the user.
 		authMS(req, res, next);		
@@ -19,7 +21,8 @@ module.exports = function(app) {
 		console.log("BEFORE CALLING POST USER SAVE "+req.body.name);
 		console.log("BEFORE CALLING POST USER SAVE "+req.body.email);
 		console.log("BEFORE CALLING POST USER SAVE "+req.body.groups);
-		var requestURL = "http://localhost:6003" + "/users";
+		//var requestURL = "http://localhost:6003" + "/users";
+		var requestURL = 'http://'+req.get('host') + "/users";
 		request({
 			url: requestURL,
 			method: 'POST',
@@ -55,15 +58,30 @@ function authMS(req, res, next) {
 // Method to invoke Authentication Microservice 
 var invokeMS = function (req) {			
     console.log("--- in invokeMS ---"+req.body.email);	
-//    validateLDAP.validateLDAPUser('user name',function(err, resp){
-//    	console.log("--- resp from http callback---",resp.response.message);
-//    	next(null, resp);
-//    });
     
-    return function (callback) {
+    return function (callback){
+  	   validateLDAP.validateLDAPUser(req,function(err, resp){
+      	console.log("--- resp from http callback---",resp.response.message);
+      	
+      	if(err){
+      		console.log("--- err message ---");
+      		error = err;
+      	}else{
+      		console.log("---- success response ---");
+      		//return(null, resp);
+      		response = resp;
+      	}
+      });
+  	   var email = req.body.email;
+  	   console.log("email BEFORE CALLBACK IS "+email);
+  	  return callback (null, email);
+     	//return(callback(error,response));
+    }
+    
+   /* return function (callback) {
         var email = req.body.email;
         callback (null, email);
-   }
+   } */
 };
 
 // Method to generate JSONWebtoken and authorize 
