@@ -32,17 +32,19 @@ module.exports = function(app) {
     	mw.verifyToken(req, function(request,response){
     		console.log("==== response"+response);
     		console.log("==== response emailid:"+response.email);
+		var email = response.email;
     		console.log("=== userProf groups:"+response.groups[0]);
     		console.log("=== userProf groups:"+response.groups[1]);
     		if(response != null){
     			var recvdgroupName;
     			var request = require('request');
-    			var requestURL = "http://localhost:6003" + "/groups/" +response.groups[0];
+    			//var requestURL = "http://localhost:6003" + "/groups/" +response.groups[0];
+			var requestURL = 'http://'+req.get('host') + '/groups/' +response.groups[0];
     			request({
     				url: requestURL,
     				method: 'GET'
     			}, function (error, response, body) {
-    				console.log(" GOT THE GROUPS "+response+" "+body);    				
+    				console.log(" GOT THE GROUPS "+email+" "+body);    				
     				var jsonData = JSON.parse(body);
     				console.log(jsonData);
     				console.log(jsonData.data.name);
@@ -63,7 +65,13 @@ module.exports = function(app) {
     		            });
         			    break;
         			default:
-        				console.log("====NOT Admin part=====");  
+        				console.log("====NOT Admin part====="+ email);  
+					Project.find( {"requestorEmail" : email} ,function(err, projects) {
+			                if (err) {
+			                	res.json({info: 'No projects found'});
+			                }
+			                res.json({info: 'projects found successfully', data: projects});	                
+			            	});	
         			}
         			
     			});
