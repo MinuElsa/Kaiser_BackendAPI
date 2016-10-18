@@ -72,5 +72,5 @@ exports.verifyToken = function(req,callback) {
 			 }
 		 );
 	 });
-}
+} 
 
