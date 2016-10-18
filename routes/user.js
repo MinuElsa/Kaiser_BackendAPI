@@ -9,12 +9,19 @@ module.exports = function(app) {
     	console.log("req body is "+req.body.name);
     	console.log("req body is "+req.body.email);
     	console.log("req body is "+req.body.groups);
-        var newuser = new user(req.body);
-        newuser.save(function(err) {     	
-            if (err) {
-                res.json({info: 'error during user create', error: err});
-            };
-            res.json({info: 'user created successfully'});
+        user.find({email : req.body.email}, function (err, docs) {
+    		console.log("docs.length is "+docs.length);
+            if (!docs.length){
+            	var newuser = new user(req.body);
+                newuser.save(function(err) {     	
+                    if (err) {
+                        res.json({info: 'error during user create', error: err});
+                    };
+                    res.json({info: 'user created successfully'});
+                });
+            }else{
+            	res.json({info: 'user already created'});
+            }
         });
     });
 
