@@ -10,8 +10,8 @@ var request = require('request');
 exports.validateLDAPUser=function(req,callback)
 {
 	console.log("--- http call ---");
-	console.log(req.body.email);
-	console.log(req.body.name);
+	console.log(req.email);
+	console.log(req.password);
 	 var services_vcap = JSON.parse(process.env.VCAP_SERVICES || "{}");
 	 console.log("services_vcap is "+services_vcap);
 	 //var serviceUrl = services_vcap.Authentication[0].credentials.serviceUrl;	
