@@ -1,5 +1,6 @@
 var _ = require('lodash');
 var user = require('../models/user.js');
+var group = require('../models/group.js');
 
 module.exports = function(app) {
 
@@ -76,6 +77,31 @@ module.exports = function(app) {
                 res.json({info: 'error during remove user', error: err});
             };
             res.json({info: 'user removed successfully'});
+        });
+    });
+    
+    
+    app.post('/usersByEmail', function (req, res) {
+    	user.find( {"email" : req.body.email}, {'groups':true} ,function(err, users) {
+            if (err) {
+            	res.json({info: 'No users found'});
+            }
+            console.log("users.. "+users);      
+            console.log("length is "+users.length);
+            var length = users.length;
+            for(i=0; i<length;i++){
+            	console.log("group IN IF is "+users[i].groups);
+            	group.findById(users[i].groups, function(err, group){
+            		console.log("GROUPS ARE "+group.name);
+            		if (group) {
+		                res.json({info: 'group found successfully', data: group});
+		            } else {
+		                res.json({info: 'group not found'});
+		            }            	
+            	});
+            }
+            
+            //res.json({info: 'users found successfully', data: users});               
         });
     });
 
