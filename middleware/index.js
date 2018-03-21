@@ -6,7 +6,8 @@ var moment = require('moment');
 var jwt =  require('jsonwebtoken');
 var user = require('../models/user.js');
 
-//var jwtSecret = process.env.secretKey; // this has to be in process environment var
+//var jwtSecret = process.env.secretKey; 
+// this has to be in process environment var
 var jwtSecret = "jsontoken";
 var encryptionType = "HS256";
 
@@ -57,17 +58,16 @@ exports.verifyToken = function(req,callback) {
 		 user.findOne({ 'email': decoded.iss },function(err,user) {
 			 console.log("=== Inside findOne ===" + err);
 				 if(err){
-					 console.log("IN ERROR@@@")
+					 console.log("Error Found")
 					 return(callback(null,err));
 				 }	 
-				 console.log("NO ERROR@@@");	
+				 console.log("Error not Found");	
 				 if(!user){
 					 console.log("=== user not found ===");
 					 err.custom = 'user not found';
 					 return(callback(null,err));
 				 }
-				 console.log("FOUND USER!!!");
-				 //return callback(null,'success');
+				 console.log("Found User");
 				 return callback(null, user);
 			 }
 		 );
