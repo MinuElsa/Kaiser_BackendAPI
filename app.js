@@ -67,7 +67,6 @@ var group =  require('./routes/group.js')(app);
 var user =  require('./routes/user.js')(app);
 
 //ldap authentication 
-// insert your changes. Baskar. 
 //authentication route
 var authentication =  require('./routes/authentication.js')(app);
 
